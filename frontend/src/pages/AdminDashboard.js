@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -14,7 +14,9 @@ import {
   ChefHat,
   Package,
   Bell,
-  Settings
+  Settings,
+  Menu,
+  X
 } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
@@ -35,6 +37,7 @@ const AdminDashboard = () => {
   const [waiterCalls, setWaiterCalls] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
@@ -158,23 +161,54 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-[#F3F4F6]">
+      {/* Mobile Overlay */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
       {/* Sidebar */}
-      <div className="w-64 bg-white border-r border-gray-200 fixed h-full">
+      <motion.div
+        initial={false}
+        animate={{
+          x: sidebarOpen ? 0 : '-100%',
+        }}
+        transition={{ type: 'tween', duration: 0.3 }}
+        className="w-64 bg-white border-r border-gray-200 fixed h-full z-50 lg:translate-x-0 lg:static"
+      >
         <div className="p-6">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-[#FF5500] rounded-full flex items-center justify-center">
-              <ChefHat className="w-5 h-5 text-white" />
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#FF5500] rounded-full flex items-center justify-center">
+                <ChefHat className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="font-bold text-[#18181B]">Menu QR</h2>
+                <p className="text-xs text-[#71717A]">{user?.name}</p>
+              </div>
             </div>
-            <div>
-              <h2 className="font-bold text-[#18181B]">Menu QR</h2>
-              <p className="text-xs text-[#71717A]">{user?.name}</p>
-            </div>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="lg:hidden text-gray-500 hover:text-gray-700"
+            >
+              <X className="w-6 h-6" />
+            </button>
           </div>
 
           <nav className="space-y-2">
             <button
               data-testid="dashboard-tab"
-              onClick={() => setActiveTab('dashboard')}
+              onClick={() => {
+                setActiveTab('dashboard');
+                setSidebarOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                 activeTab === 'dashboard'
                   ? 'bg-orange-50 text-[#FF5500]'
@@ -187,7 +221,10 @@ const AdminDashboard = () => {
 
             <button
               data-testid="orders-tab"
-              onClick={() => setActiveTab('orders')}
+              onClick={() => {
+                setActiveTab('orders');
+                setSidebarOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                 activeTab === 'orders'
                   ? 'bg-orange-50 text-[#FF5500]'
@@ -205,7 +242,10 @@ const AdminDashboard = () => {
 
             <button
               data-testid="history-tab"
-              onClick={() => setActiveTab('history')}
+              onClick={() => {
+                setActiveTab('history');
+                setSidebarOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                 activeTab === 'history'
                   ? 'bg-orange-50 text-[#FF5500]'
@@ -218,7 +258,10 @@ const AdminDashboard = () => {
 
             <button
               data-testid="menu-tab"
-              onClick={() => setActiveTab('menu')}
+              onClick={() => {
+                setActiveTab('menu');
+                setSidebarOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                 activeTab === 'menu'
                   ? 'bg-orange-50 text-[#FF5500]'
@@ -231,7 +274,10 @@ const AdminDashboard = () => {
 
             <button
               data-testid="tables-tab"
-              onClick={() => setActiveTab('tables')}
+              onClick={() => {
+                setActiveTab('tables');
+                setSidebarOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                 activeTab === 'tables'
                   ? 'bg-orange-50 text-[#FF5500]'
@@ -244,7 +290,10 @@ const AdminDashboard = () => {
 
             <button
               data-testid="settings-tab"
-              onClick={() => setActiveTab('settings')}
+              onClick={() => {
+                setActiveTab('settings');
+                setSidebarOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                 activeTab === 'settings'
                   ? 'bg-orange-50 text-[#FF5500]'
@@ -267,10 +316,29 @@ const AdminDashboard = () => {
             <span className="font-medium">Sair</span>
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Content */}
-      <div className="ml-64 flex-1 p-8">
+      <div className="flex-1 lg:ml-64">
+        {/* Mobile Header with Burger Menu */}
+        <div className="lg:hidden sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-all"
+            data-testid="burger-menu-button"
+          >
+            <Menu className="w-6 h-6 text-gray-700" />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-[#FF5500] rounded-full flex items-center justify-center">
+              <ChefHat className="w-4 h-4 text-white" />
+            </div>
+            <span className="font-bold text-[#18181B]">Menu QR</span>
+          </div>
+          <div className="w-10"></div>
+        </div>
+
+        <div className="p-4 lg:p-8">
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
           <div>
@@ -473,6 +541,7 @@ const AdminDashboard = () => {
         )}
 
         {activeTab === 'settings' && <RestaurantSettings />}
+        </div>
       </div>
     </div>
   );
