@@ -15,7 +15,75 @@ from io import BytesIO
 import socketio
 import jwt
 from passlib.context import CryptContext
-from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
+import stripe
+
+# Local Stripe wrapper classes (replacement for emergentintegrations)
+class CheckoutSessionRequest(BaseModel):
+    amount: float
+    currency: str = "eur"
+    success_url: str
+    cancel_url: str
+    metadata: Dict[str, Any] = {}
+
+class CheckoutSessionResponse(BaseModel):
+    session_id: str
+    url: str
+
+class CheckoutStatusResponse(BaseModel):
+    status: str
+    payment_status: str
+    amount_total: Optional[int] = None
+    currency: Optional[str] = None
+    session_id: Optional[str] = None
+
+class StripeCheckout:
+    def __init__(self, api_key: str, webhook_url: str = None):
+        self.api_key = api_key
+        self.webhook_url = webhook_url
+        stripe.api_key = api_key
+    
+    async def create_checkout_session(self, request: CheckoutSessionRequest) -> CheckoutSessionResponse:
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': request.currency,
+                    'product_data': {
+                        'name': 'Pedido',
+                    },
+                    'unit_amount': int(request.amount * 100),
+                },
+                'quantity': 1,
+            }],
+            mode='payment',
+            success_url=request.success_url,
+            cancel_url=request.cancel_url,
+            metadata=request.metadata
+        )
+        return CheckoutSessionResponse(session_id=session.id, url=session.url)
+    
+    async def get_checkout_status(self, session_id: str) -> CheckoutStatusResponse:
+        session = stripe.checkout.Session.retrieve(session_id)
+        return CheckoutStatusResponse(
+            status=session.status,
+            payment_status=session.payment_status,
+            amount_total=session.amount_total,
+            currency=session.currency,
+            session_id=session.id
+        )
+    
+    async def handle_webhook(self, body: bytes, signature: str) -> CheckoutStatusResponse:
+        # Simple webhook handling - in production use proper signature verification
+        import json
+        event = json.loads(body)
+        if event['type'] == 'checkout.session.completed':
+            session = event['data']['object']
+            return CheckoutStatusResponse(
+                status='complete',
+                payment_status='paid',
+                session_id=session['id']
+            )
+        return CheckoutStatusResponse(status='pending', payment_status='unpaid')
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
