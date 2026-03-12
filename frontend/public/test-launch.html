@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Launch Settings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 { color: #333; }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        .enabled {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        .disabled {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+        .loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #bee5eb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        .json {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin: 15px 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🚀 Teste de Configurações de Lançamento</h1>
+        <p>Esta página testa se as configurações de "Launching Soon" estão a funcionar corretamente.</p>
+        
+        <div id="status" class="status loading">
+            ⏳ A carregar configurações...
+        </div>
+        
+        <div id="data" class="json"></div>
+        
+        <button onclick="loadSettings()">🔄 Recarregar</button>
+        <button onclick="testOnboarding()">📄 Ir para Onboarding</button>
+    </div>
+
+    <div class="card">
+        <h2>📊 Como Testar:</h2>
+        <ol>
+            <li>Abra o <strong>Backoffice</strong> → <strong>Lançamento</strong></li>
+            <li>Toggle <strong>ON/OFF</strong></li>
+            <li>Clique em <strong>"Guardar Configurações"</strong></li>
+            <li>Volte aqui e clique em <strong>"🔄 Recarregar"</strong></li>
+            <li>Veja o estado atualizado abaixo</li>
+        </ol>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin;
+        
+        async function loadSettings() {
+            const statusEl = document.getElementById('status');
+            const dataEl = document.getElementById('data');
+            
+            statusEl.className = 'status loading';
+            statusEl.textContent = '⏳ A carregar configurações...';
+            dataEl.textContent = '';
+            
+            try {
+                const url = `${API_URL}/api/settings/global`;
+                console.log('Fetching from:', url);
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                console.log('Settings loaded:', data);
+                
+                // Update status
+                if (data.plans_sales_enabled) {
+                    statusEl.className = 'status enabled';
+                    statusEl.innerHTML = '✅ <strong>VENDAS ATIVAS</strong><br>Os utilizadores podem subscrever planos normalmente.';
+                } else {
+                    statusEl.className = 'status disabled';
+                    statusEl.innerHTML = '🚀 <strong>MODO LAUNCHING SOON</strong><br>Os utilizadores veem "Lançamento em breve".';
+                }
+                
+                // Show JSON data
+                dataEl.textContent = JSON.stringify(data, null, 2);
+                
+            } catch (error) {
+                console.error('Error loading settings:', error);
+                statusEl.className = 'status error';
+                statusEl.textContent = '❌ Erro ao carregar: ' + error.message;
+                dataEl.textContent = 'Erro: ' + error.message;
+            }
+        }
+        
+        function testOnboarding() {
+            window.location.href = '/onboarding?plan=starter';
+        }
+        
+        // Load on page load
+        loadSettings();
+    </script>
+</body>
+</html>

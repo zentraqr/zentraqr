@@ -1,0 +1,132 @@
+{
+  "identity": {
+    "persona": "E1: The Anti-AI Designer",
+    "mission": "Create a vibrant, appetite-inducing digital waiter experience that feels alive, not robotic.",
+    "core_principles": [
+      "Fusion over Imitation: Mix 'Food Delivery' energy with 'High-End Dining' polish.",
+      "Emotion First: Every interaction must spark appetite or relief (efficiency).",
+      "Content is King: Food photos are the heroes; UI is the stage.",
+      "Zoom In: Macro shots of food to trigger cravings.",
+      "Negative Space: Don't clutter the menu; let the dishes breathe."
+    ],
+    "anti_patterns": [
+      "Purple/Teal for CTAs (Use Orange/Green instead)",
+      "Inter for Headings (Use Outfit)",
+      "Center-Everything (Use asymmetrical grids)",
+      "Generic 'SaaS Blue' dashboards"
+    ]
+  },
+  "theme": {
+    "name": "Savory Pop",
+    "mode": "light",
+    "strategy": "High-contrast light mode for customers to maximize food appeal. Optional dark mode for admin later, but focus on crisp, clean data visibility first."
+  },
+  "typography": {
+    "headings": {
+      "family": "Outfit, sans-serif",
+      "weights": ["500", "700"],
+      "usage": "Use for all page titles, section headers, and product names. Tight tracking (-0.02em)."
+    },
+    "body": {
+      "family": "Plus Jakarta Sans, sans-serif",
+      "weights": ["400", "500", "600"],
+      "usage": "Use for descriptions, prices, and admin data tables. Good legibility at small sizes."
+    },
+    "installation": "Import from Google Fonts: @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');"
+  },
+  "colors": {
+    "primary": {
+      "name": "Zest Orange",
+      "hex": "#FF5500",
+      "usage": "Primary CTAs (Add to Cart, Checkout), Brand Accents, Active States"
+    },
+    "secondary": {
+      "name": "Fresh Basil",
+      "hex": "#10B981",
+      "usage": "Success states, Vegetarian badges, 'Order Confirmed' moments"
+    },
+    "accent": {
+      "name": "Mac 'n Cheese",
+      "hex": "#F59E0B",
+      "usage": "Ratings, Warnings, Highlights"
+    },
+    "background": {
+      "app": "#FAFAFA",
+      "admin": "#F3F4F6",
+      "surface": "#FFFFFF"
+    },
+    "text": {
+      "primary": "#18181B",
+      "secondary": "#71717A",
+      "inverted": "#FFFFFF"
+    },
+    "border": {
+      "default": "#E4E4E7",
+      "active": "#FF5500"
+    }
+  },
+  "components": {
+    "radius": "rounded-xl",
+    "shadows": {
+      "card": "shadow-[0_2px_8px_rgba(0,0,0,0.08)]",
+      "float": "shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
+    },
+    "buttons": {
+      "primary": "bg-[#FF5500] hover:bg-[#CC4400] text-white rounded-full font-bold shadow-lg shadow-orange-500/20 transition-transform active:scale-95",
+      "secondary": "bg-white border-2 border-gray-100 text-gray-900 hover:border-[#FF5500] hover:text-[#FF5500] rounded-full font-medium"
+    },
+    "cards": {
+      "menu_item": "bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-all",
+      "admin_stat": "bg-white p-6 rounded-xl border border-gray-200 shadow-sm"
+    }
+  },
+  "layout_strategy": {
+    "customer_app": {
+      "type": "Mobile-First",
+      "grid": "grid-cols-1",
+      "navigation": "Sticky Bottom Bar (Home, Cart, Orders, Call Waiter)",
+      "spacing": "Dense but airy. p-4 for containers, gap-4 for grids."
+    },
+    "admin_dashboard": {
+      "type": "Density-First",
+      "grid": "grid-cols-12",
+      "sidebar": "Fixed left sidebar (w-64)",
+      "spacing": "Compact. p-6 for main content, gap-6 for widgets."
+    }
+  },
+  "images": {
+    "hero": {
+      "url": "https://images.unsplash.com/photo-1608767221051-2b9d18f35a2f?crop=entropy&cs=srgb&fm=jpg&ixlib=rb-4.1.0&q=85",
+      "alt": "Delicious Gourmet Burger Hero"
+    },
+    "categories": {
+      "burger": "https://images.unsplash.com/photo-1608767221051-2b9d18f35a2f?crop=entropy&cs=srgb&fm=jpg&ixlib=rb-4.1.0&q=85",
+      "pizza": "https://images.unsplash.com/photo-1751200884901-c1c6f43ae1d6?crop=entropy&cs=srgb&fm=jpg&ixlib=rb-4.1.0&q=85",
+      "sushi": "https://images.unsplash.com/photo-1763093226729-b412ad2f309d?crop=entropy&cs=srgb&fm=jpg&ixlib=rb-4.1.0&q=85",
+      "salad": "https://images.unsplash.com/photo-1722032617357-7b09276b1a8d?crop=entropy&cs=srgb&fm=jpg&ixlib=rb-4.1.0&q=85",
+      "drink": "https://images.unsplash.com/photo-1761361371739-546f12a9cee4?crop=entropy&cs=srgb&fm=jpg&ixlib=rb-4.1.0&q=85",
+      "dessert": "https://images.unsplash.com/photo-1762631934519-291bf80c3f2a?crop=entropy&cs=srgb&fm=jpg&ixlib=rb-4.1.0&q=85"
+    }
+  },
+  "visual_enhancers": {
+    "glassmorphism": "backdrop-blur-xl bg-white/80 border-b border-white/20",
+    "micro_interactions": "Use framer-motion for: 'Add to Cart' bounce, Page transitions (Slide Left), Modal pop-ups.",
+    "empty_states": "Use playful ASCII art or simple SVG illustrations for empty cart/orders."
+  },
+  "instructions_to_main_agent": {
+    "framework": "React (JS) + Tailwind CSS + Shadcn/UI (adapted for JS)",
+    "file_structure_note": "You are working in a JS environment, not TS. Remove type annotations from Shadcn components if copying them.",
+    "critical_rules": [
+      "DO NOT use gradients for main backgrounds. Use solid warm grays.",
+      "DO NOT center text by default. Use left-align for readability.",
+      "ALWAYS use 'data-testid' on interactive elements.",
+      "CUSTOMER APP: Must be fully usable on mobile (touch targets > 44px).",
+      "ADMIN DASHBOARD: Must be dense and data-rich. Use tables with sticky headers."
+    ]
+  },
+  "universal_guidelines": {
+    "transitions": "transition-all duration-300 ease-out",
+    "focus_states": "focus:ring-2 focus:ring-offset-2 focus:ring-[#FF5500]",
+    "accessibility": "Ensure text contrast > 4.5:1. Use semantic HTML."
+  }
+}
