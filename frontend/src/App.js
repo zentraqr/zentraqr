@@ -28,6 +28,7 @@ function App() {
           <SocketProvider>
             <Routes>
               <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<AdminLoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/demo" element={<DemoPage />} />
               <Route path="/onboarding" element={<OnboardingPage />} />
