@@ -1,47 +1,50 @@
 # ZentraQR - Product Requirements Document
 
 ## Original Problem Statement
-Conectar al repositorio https://github.com/zentraqr/zentraqr.git y configurar las variables de entorno para ejecutar el proyecto en el entorno de preview.
+Sistema de gestão de restaurantes com menus QR Code, pedidos em tempo real e pagamentos.
 
 ## Architecture
-- **Frontend**: React.js con Tailwind CSS
+- **Frontend**: React.js com Tailwind CSS
 - **Backend**: FastAPI (Python)
-- **Database**: MongoDB Atlas (cluster0.sc8ebl5.mongodb.net)
-- **Authentication**: JWT-based
-- **Payments**: Stripe integration
-- **Email**: Gmail SMTP
-
-## User Personas
-1. **Restaurant Owner**: Gestiona restaurantes, mesas, menús y pedidos
-2. **Customer**: Escanea QR codes y realiza pedidos
-
-## Core Requirements (Static)
-- Sistema de gestión de restaurantes
-- Generación de QR codes para mesas
-- Sistema de pedidos en tiempo real (Socket.IO)
-- Procesamiento de pagos con Stripe
-- Autenticación de usuarios
+- **Database**: MongoDB Atlas
+- **Real-time**: Socket.IO
+- **Payments**: Stripe
 
 ## What's Been Implemented
-- [2024-03-12] Clonación del repositorio y configuración inicial
-- [2024-03-12] Configuración de variables de entorno (MongoDB Atlas, JWT, Stripe, Gmail)
-- [2024-03-12] Instalación de dependencias (qrcode[pil])
-- [2024-03-12] Servicios backend y frontend funcionando
+
+### Session 1 (2024-03-12)
+- Clonação do repositório zentraqr
+- Configuração de variáveis de entorno
+- Logo personalizado implementado
+
+### Session 2 (2024-03-13)
+- Rota /login adicionada para área de clientes
+- Sistema completo de personalização de QR Codes:
+  - QRCodeEditor.js - Editor visual com preview em tempo real
+  - 4 tabs: Conteúdo, Estilo, Layout, Logo
+  - 8 paletas de cores predefinidas
+  - 3 layouts: Clássico, Compacto, Minimalista
+  - 3 estilos de cartão: Arredondado, Reto, Minimal
+  - Upload de logo personalizado
+  - Impressão em batch de múltiplas mesas
+  - Endpoints backend: GET/PUT /api/qr-settings
 
 ## Prioritized Backlog
-### P0 (Critical)
-- ✅ Proyecto funcionando en preview
+
+### P0 (Critical) - DONE
+- ✅ Autenticação funcional
+- ✅ Sistema de QR Codes personalizáveis
 
 ### P1 (High Priority)
-- Seed data para pruebas
-- Verificación de flujos de autenticación
+- Templates de QR pré-definidos por tipo de restaurante
+- Exportar PDF com múltiplas páginas
 
 ### P2 (Nice to Have)
-- Optimización de rendimiento
-- Tests automatizados
+- Fontes personalizáveis
+- Bordas e decorações
+- Integração com impressoras
 
 ## Next Tasks
-1. Probar registro/login de usuarios
-2. Crear restaurante de prueba
-3. Verificar generación de QR codes
-4. Probar flujo de pedidos
+1. Testar impressão em diferentes browsers
+2. Adicionar mais templates
+3. Melhorar preview mobile
