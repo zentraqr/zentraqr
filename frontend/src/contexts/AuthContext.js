@@ -1,11 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-// const BACKEND_URL = "https://zentraqr-api-git-main-zentraqr-6009s-projects.vercel.app";
-// const API = "https://zentraqr-api-git-main-zentraqr-6009s-projects.vercel.app/api";
-
-const BACKEND_URL = "http://localhost:8001";
-const API = "http://localhost:8001/api";
+// Use environment variable for backend URL, fallback to empty string for deployed environment
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "";
+const API = `${BACKEND_URL}/api`;
 
 const AuthContext = createContext();
 
