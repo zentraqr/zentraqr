@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { SocketProvider } from './contexts/SocketContext';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import './App.css';
 
 // Pages
@@ -25,34 +26,36 @@ import ResetPassword from './pages/ResetPassword';
 function App() {
   return (
     <BrowserRouter>
-      <LanguageProvider>
-        <AuthProvider>
-          <SocketProvider>
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<AdminLoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
-              <Route path="/demo" element={<DemoPage />} />
-              <Route path="/onboarding" element={<OnboardingPage />} />
-              <Route path="/subscription/success" element={<SubscriptionSuccessPage />} />
-              <Route path="/subscription/cancel" element={<OnboardingPage />} />
-              <Route path="/menu" element={<MenuPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/order-tracking" element={<OrderTrackingPage />} />
-              <Route path="/payment-success" element={<PaymentSuccess />} />
-              <Route path="/payment-cancel" element={<PaymentCancel />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/backoffice" element={<BackofficePage />} />
-              <Route path="/admin/login" element={<AdminLoginPage />} />
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/floor-plan" element={<FloorPlanPage />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-            </Routes>
-          </SocketProvider>
-        </AuthProvider>
-      </LanguageProvider>
+      <ThemeProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <SocketProvider>
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<AdminLoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/demo" element={<DemoPage />} />
+                <Route path="/onboarding" element={<OnboardingPage />} />
+                <Route path="/subscription/success" element={<SubscriptionSuccessPage />} />
+                <Route path="/subscription/cancel" element={<OnboardingPage />} />
+                <Route path="/menu" element={<MenuPage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route path="/order-tracking" element={<OrderTrackingPage />} />
+                <Route path="/payment-success" element={<PaymentSuccess />} />
+                <Route path="/payment-cancel" element={<PaymentCancel />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/backoffice" element={<BackofficePage />} />
+                <Route path="/admin/login" element={<AdminLoginPage />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/floor-plan" element={<FloorPlanPage />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+              </Routes>
+            </SocketProvider>
+          </AuthProvider>
+        </LanguageProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

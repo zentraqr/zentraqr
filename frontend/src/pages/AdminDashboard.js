@@ -18,11 +18,14 @@ import {
   Menu,
   X,
   Map,
-  AlertTriangle
+  AlertTriangle,
+  Moon,
+  Sun
 } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
+import { useTheme } from '../contexts/ThemeContext';
 import MenuManagement from './MenuManagement';
 import RestaurantSettings from './RestaurantSettings';
 import TableManagement from './TableManagement';
@@ -35,6 +38,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { socket, joinRestaurant, isConnected } = useSocket();
+  const { isDarkMode, toggleTheme } = useTheme();
 
   const [stats, setStats] = useState(null);
   const [orders, setOrders] = useState([]);
@@ -287,15 +291,14 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#F3F4F6]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#1a2342]"></div>
+      <div className="flex items-center justify-center min-h-screen bg-[#F3F4F6] dark:bg-gray-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#1a2342] dark:border-blue-400"></div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-[#F3F4F6]">
-      {/* New Order Notification Toast */}
+    <div className="flex min-h-screen bg-[#F3F4F6] dark:bg-gray-900">{/* New Order Notification Toast */}
       {newOrderNotification && (
         <motion.div
           initial={{ opacity: 0, y: -50, x: '-50%' }}
@@ -360,24 +363,24 @@ const AdminDashboard = () => {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4"
+            className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4"
           >
             {/* Icon */}
             <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-                <AlertTriangle className="w-8 h-8 text-red-600" />
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
               </div>
             </div>
             
             {/* Content */}
             <div className="text-center mb-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                 Cancelar Pedido
               </h3>
-              <p className="text-gray-600">
-                Tem certeza que deseja cancelar o pedido <span className="font-semibold text-gray-800">#{cancelModal.orderNumber}</span>?
+              <p className="text-gray-600 dark:text-gray-400">
+                Tem certeza que deseja cancelar o pedido <span className="font-semibold text-gray-800 dark:text-gray-200">#{cancelModal.orderNumber}</span>?
               </p>
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
                 Esta ação não pode ser desfeita.
               </p>
             </div>
@@ -386,13 +389,13 @@ const AdminDashboard = () => {
             <div className="flex gap-3">
               <button
                 onClick={() => setCancelModal({ open: false, orderId: null, orderNumber: null })}
-                className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all"
+                className="flex-1 px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-xl transition-all"
               >
                 Voltar
               </button>
               <button
                 onClick={confirmCancelOrder}
-                className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-all"
+                className="flex-1 px-6 py-3 bg-red-600 dark:bg-red-700 hover:bg-red-700 dark:hover:bg-red-800 text-white font-medium rounded-xl transition-all"
               >
                 Sim, Cancelar
               </button>
@@ -411,7 +414,7 @@ const AdminDashboard = () => {
 
       {/* Sidebar - Fixed position */}
       <div className={`
-        w-64 bg-white border-r border-gray-200 h-screen overflow-y-auto
+        w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 h-screen overflow-y-auto
         fixed top-0 left-0
         z-50
         transition-transform duration-300 lg:translate-x-0
@@ -424,19 +427,19 @@ const AdminDashboard = () => {
                 <img 
                   src={restaurant.logo_url} 
                   alt={restaurant.name} 
-                  className="w-10 h-10 rounded-full object-cover border border-gray-200" 
+                  className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-600" 
                 />
               ) : (
                 <img src="/logo.png" alt="Logo" className="w-10 h-10 object-contain" />
               )}
               <div>
-                <h2 className="font-bold text-[#18181B]">{restaurant?.name || 'ZentraQR'}</h2>
-                <p className="text-xs text-[#71717A]">{user?.role === 'admin' ? 'Administrador' : 'Staff'}</p>
+                <h2 className="font-bold text-[#18181B] dark:text-white">{restaurant?.name || 'ZentraQR'}</h2>
+                <p className="text-xs text-[#71717A] dark:text-gray-400">{user?.role === 'admin' ? 'Administrador' : 'Staff'}</p>
               </div>
             </div>
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden text-gray-500 hover:text-gray-700"
+              className="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             >
               <X className="w-6 h-6" />
             </button>
@@ -451,8 +454,8 @@ const AdminDashboard = () => {
               }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                 activeTab === 'dashboard'
-                  ? 'bg-slate-50 text-[#1a2342]'
-                  : 'text-[#71717A] hover:bg-gray-50'
+                  ? 'bg-slate-50 dark:bg-gray-700 text-[#1a2342] dark:text-white'
+                  : 'text-[#71717A] dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
               <LayoutDashboard className="w-5 h-5" />
@@ -467,14 +470,14 @@ const AdminDashboard = () => {
               }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                 activeTab === 'orders'
-                  ? 'bg-slate-50 text-[#1a2342]'
-                  : 'text-[#71717A] hover:bg-gray-50'
+                  ? 'bg-slate-50 dark:bg-gray-700 text-[#1a2342] dark:text-white'
+                  : 'text-[#71717A] dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
               <ShoppingBag className="w-5 h-5" />
               <span className="font-medium">Pedidos</span>
               {activeOrders.length > 0 && (
-                <span className="ml-auto bg-[#1a2342] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                <span className="ml-auto bg-[#1a2342] dark:bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {activeOrders.length}
                 </span>
               )}
@@ -488,8 +491,8 @@ const AdminDashboard = () => {
               }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                 activeTab === 'history'
-                  ? 'bg-slate-50 text-[#1a2342]'
-                  : 'text-[#71717A] hover:bg-gray-50'
+                  ? 'bg-slate-50 dark:bg-gray-700 text-[#1a2342] dark:text-white'
+                  : 'text-[#71717A] dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
               <CheckCircle className="w-5 h-5" />
@@ -504,8 +507,8 @@ const AdminDashboard = () => {
               }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                 activeTab === 'menu'
-                  ? 'bg-slate-50 text-[#1a2342]'
-                  : 'text-[#71717A] hover:bg-gray-50'
+                  ? 'bg-slate-50 dark:bg-gray-700 text-[#1a2342] dark:text-white'
+                  : 'text-[#71717A] dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
               <UtensilsCrossed className="w-5 h-5" />
@@ -520,8 +523,8 @@ const AdminDashboard = () => {
               }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                 activeTab === 'tables'
-                  ? 'bg-slate-50 text-[#1a2342]'
-                  : 'text-[#71717A] hover:bg-gray-50'
+                  ? 'bg-slate-50 dark:bg-gray-700 text-[#1a2342] dark:text-white'
+                  : 'text-[#71717A] dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
               <QrCode className="w-5 h-5" />
@@ -534,7 +537,7 @@ const AdminDashboard = () => {
                 navigate('/admin/floor-plan');
                 setSidebarOpen(false);
               }}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-[#71717A] hover:bg-gray-50"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-[#71717A] dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <Map className="w-5 h-5" />
               <span className="font-medium">Plantas Salas</span>
@@ -548,8 +551,8 @@ const AdminDashboard = () => {
               }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                 activeTab === 'settings'
-                  ? 'bg-slate-50 text-[#1a2342]'
-                  : 'text-[#71717A] hover:bg-gray-50'
+                  ? 'bg-slate-50 dark:bg-gray-700 text-[#1a2342] dark:text-white'
+                  : 'text-[#71717A] dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
               }`}
             >
               <Settings className="w-5 h-5" />
@@ -558,18 +561,37 @@ const AdminDashboard = () => {
           </nav>
         </div>
 
-        <div className="absolute bottom-0 w-64 p-6 border-t border-gray-200">
+        <div className="absolute bottom-0 w-64 p-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className="w-full flex items-center gap-3 px-4 py-3 mb-3 text-[#71717A] dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-all"
+            data-testid="theme-toggle"
+          >
+            {isDarkMode ? (
+              <>
+                <Sun className="w-5 h-5" />
+                <span className="font-medium">Modo Claro</span>
+              </>
+            ) : (
+              <>
+                <Moon className="w-5 h-5" />
+                <span className="font-medium">Modo Escuro</span>
+              </>
+            )}
+          </button>
+          
           {/* Real-time connection indicator */}
           <div className="flex items-center gap-2 mb-4 px-4">
             <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
-            <span className="text-xs text-[#71717A]">
+            <span className="text-xs text-[#71717A] dark:text-gray-400">
               {isConnected ? 'Em tempo real' : 'Reconectando...'}
             </span>
           </div>
           <button
             data-testid="logout-button"
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-all"
+            className="w-full flex items-center gap-3 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
           >
             <LogOut className="w-5 h-5" />
             <span className="font-medium">Sair</span>
@@ -580,114 +602,123 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <div className="flex-1 w-full lg:ml-64">
         {/* Mobile Header with Burger Menu */}
-        <div className="lg:hidden sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <div className="lg:hidden sticky top-0 z-30 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 flex items-center justify-between">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-all"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all"
             data-testid="burger-menu-button"
           >
-            <Menu className="w-6 h-6 text-gray-700" />
+            <Menu className="w-6 h-6 text-gray-700 dark:text-gray-300" />
           </button>
           <div className="flex items-center gap-2">
             {restaurant?.logo_url ? (
               <img 
                 src={restaurant.logo_url} 
                 alt={restaurant.name} 
-                className="w-8 h-8 rounded-full object-cover border border-gray-200" 
+                className="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-gray-600" 
               />
             ) : (
               <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain" />
             )}
-            <span className="font-bold text-[#18181B]">{restaurant?.name || 'ZentraQR'}</span>
+            <span className="font-bold text-[#18181B] dark:text-white">{restaurant?.name || 'ZentraQR'}</span>
           </div>
-          <div className="w-10"></div>
+          <button
+            onClick={toggleTheme}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all"
+          >
+            {isDarkMode ? (
+              <Sun className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+            ) : (
+              <Moon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+            )}
+          </button>
         </div>
 
         <div className="p-4 lg:p-8">
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
           <div>
-            <h1 className="text-3xl font-bold text-[#18181B] mb-8">Dashboard</h1>
+            <h1 className="text-3xl font-bold text-[#18181B] dark:text-white mb-8">Dashboard</h1>
 
             {/* Stats Cards */}
             <div className="grid md:grid-cols-4 gap-6 mb-8">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm"
+                className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <ShoppingBag className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                    <ShoppingBag className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                 </div>
-                <p className="text-2xl font-bold text-[#18181B] mb-1">{stats?.total_orders_today || 0}</p>
-                <p className="text-sm text-[#71717A]">Pedidos Hoje</p>
+                <p className="text-2xl font-bold text-[#18181B] dark:text-white mb-1">{stats?.total_orders_today || 0}</p>
+                <p className="text-sm text-[#71717A] dark:text-gray-400">Pedidos Hoje</p>
               </motion.div>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm"
+                className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Euro className="w-6 h-6 text-green-600" />
+                  <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                    <Euro className="w-6 h-6 text-green-600 dark:text-green-400" />
                   </div>
                 </div>
-                <p className="text-2xl font-bold text-[#18181B] mb-1">€{(stats?.revenue_today || 0).toFixed(2)}</p>
-                <p className="text-sm text-[#71717A]">Faturação Hoje</p>
+                <p className="text-2xl font-bold text-[#18181B] dark:text-white mb-1">€{(stats?.revenue_today || 0).toFixed(2)}</p>
+                <p className="text-sm text-[#71717A] dark:text-gray-400">Faturação Hoje</p>
               </motion.div>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm"
+                className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-slate-600" />
+                  <div className="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center">
+                    <Clock className="w-6 h-6 text-slate-600 dark:text-slate-300" />
                   </div>
                 </div>
-                <p className="text-2xl font-bold text-[#18181B] mb-1">{stats?.active_orders || 0}</p>
-                <p className="text-sm text-[#71717A]">Pedidos Ativos</p>
+                <p className="text-2xl font-bold text-[#18181B] dark:text-white mb-1">{stats?.active_orders || 0}</p>
+                <p className="text-sm text-[#71717A] dark:text-gray-400">Pedidos Ativos</p>
               </motion.div>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm"
+                className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                    <Bell className="w-6 h-6 text-red-600" />
+                  <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+                    <Bell className="w-6 h-6 text-red-600 dark:text-red-400" />
                   </div>
                 </div>
-                <p className="text-2xl font-bold text-[#18181B] mb-1">{waiterCalls.length}</p>
-                <p className="text-sm text-[#71717A]">Chamadas Pendentes</p>
+                <p className="text-2xl font-bold text-[#18181B] dark:text-white mb-1">{waiterCalls.length}</p>
+                <p className="text-sm text-[#71717A] dark:text-gray-400">Chamadas Pendentes</p>
               </motion.div>
             </div>
 
             {/* Waiter Calls */}
             {waiterCalls.length > 0 && (
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-8">
-                <h2 className="text-xl font-bold text-[#18181B] mb-4 flex items-center gap-2">
-                  <Bell className="w-5 h-5 text-red-600" />
+              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 mb-8">
+                <h2 className="text-xl font-bold text-[#18181B] dark:text-white mb-4 flex items-center gap-2">
+                  <Bell className="w-5 h-5 text-red-600 dark:text-red-400" />
                   Chamadas de Empregado
                 </h2>
                 <div className="space-y-3">
                   {waiterCalls.map((call) => (
-                    <div key={call.id} className="flex items-center justify-between p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <div key={call.id} className="flex items-center justify-between p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                       <div>
-                        <p className="font-bold text-red-900">Mesa {call.table_number}</p>
-                        <p className="text-sm text-red-700">{new Date(call.created_at).toLocaleTimeString('pt-PT')}</p>
+                        <p className="font-bold text-red-900 dark:text-red-300">Mesa {call.table_number}</p>
+                        <p className="text-sm text-red-700 dark:text-red-400">{new Date(call.created_at).toLocaleTimeString('pt-PT')}</p>
                       </div>
                       <button
                         onClick={() => handleResolveWaiterCall(call.id)}
-                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-all"
+                        className="bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 text-white px-4 py-2 rounded-lg font-medium transition-all"
                       >
                         Resolver
                       </button>
@@ -698,10 +729,10 @@ const AdminDashboard = () => {
             )}
 
             {/* Active Orders */}
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-              <h2 className="text-xl font-bold text-[#18181B] mb-4">Pedidos Ativos</h2>
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
+              <h2 className="text-xl font-bold text-[#18181B] dark:text-white mb-4">Pedidos Ativos</h2>
               {activeOrders.length === 0 ? (
-                <p className="text-[#71717A] text-center py-8">Nenhum pedido ativo</p>
+                <p className="text-[#71717A] dark:text-gray-400 text-center py-8">Nenhum pedido ativo</p>
               ) : (
                 <div className="space-y-4">
                   {activeOrders.map((order) => (
@@ -723,10 +754,10 @@ const AdminDashboard = () => {
         {/* Orders Tab */}
         {activeTab === 'orders' && (
           <div>
-            <h1 className="text-3xl font-bold text-[#18181B] mb-8">Pedidos Ativos</h1>
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+            <h1 className="text-3xl font-bold text-[#18181B] dark:text-white mb-8">Pedidos Ativos</h1>
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
               {activeOrders.length === 0 ? (
-                <p className="text-[#71717A] text-center py-8">Nenhum pedido ativo</p>
+                <p className="text-[#71717A] dark:text-gray-400 text-center py-8">Nenhum pedido ativo</p>
               ) : (
                 <div className="space-y-4">
                   {activeOrders.map((order) => (
@@ -748,18 +779,18 @@ const AdminDashboard = () => {
         {/* History Tab */}
         {activeTab === 'history' && (
           <div>
-            <h1 className="text-3xl font-bold text-[#18181B] mb-8">Histórico de Pedidos</h1>
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+            <h1 className="text-3xl font-bold text-[#18181B] dark:text-white mb-8">Histórico de Pedidos</h1>
+            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
               {historyOrders.length === 0 ? (
-                <p className="text-[#71717A] text-center py-8">Nenhum pedido no histórico</p>
+                <p className="text-[#71717A] dark:text-gray-400 text-center py-8">Nenhum pedido no histórico</p>
               ) : (
                 <div className="space-y-4">
                   {historyOrders.map((order) => (
-                    <div key={order.id} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <div key={order.id} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-700/50">
                       <div className="flex items-start justify-between mb-3">
                         <div>
-                          <p className="font-bold text-lg text-[#18181B]">Pedido #{order.id.slice(-8)}</p>
-                          <p className="text-sm text-[#71717A]">
+                          <p className="font-bold text-lg text-[#18181B] dark:text-white">Pedido #{order.id.slice(-8)}</p>
+                          <p className="text-sm text-[#71717A] dark:text-gray-400">
                             Mesa {order.table_number} • {new Date(order.created_at).toLocaleString('pt-PT')}
                           </p>
                         </div>
@@ -768,23 +799,23 @@ const AdminDashboard = () => {
                             {getStatusText(order.status)}
                           </span>
                           {order.payment_status === 'paid' && (
-                            <p className="text-xs text-[#10B981] mt-1">✓ Pago</p>
+                            <p className="text-xs text-[#10B981] dark:text-green-400 mt-1">✓ Pago</p>
                           )}
                           {order.payment_method === 'counter' && order.payment_status === 'pending' && (
-                            <p className="text-xs text-blue-600 mt-1">💰 Pagar no Balcão</p>
+                            <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">💰 Pagar no Balcão</p>
                           )}
                         </div>
                       </div>
 
-                      <div className="space-y-2 mb-3 border-t border-gray-200 pt-3">
+                      <div className="space-y-2 mb-3 border-t border-gray-200 dark:border-gray-600 pt-3">
                         {order.items.map((item, index) => (
                           <div key={index} className="text-sm">
-                            <p className="text-[#71717A]">
+                            <p className="text-[#71717A] dark:text-gray-400">
                               {item.quantity}x {item.product_name}
                               {item.extras && item.extras.length > 0 && ` (+ ${item.extras.map(e => e.name).join(', ')})`}
                             </p>
                             {item.notes && (
-                              <p className="text-xs text-amber-600 mt-1 italic flex items-center gap-1">
+                              <p className="text-xs text-amber-600 dark:text-amber-400 mt-1 italic flex items-center gap-1">
                                 <span>📝</span> {item.notes}
                               </p>
                             )}
@@ -792,18 +823,18 @@ const AdminDashboard = () => {
                         ))}
                         {/* Observações gerais do pedido */}
                         {order.notes && (
-                          <div className="mt-3 p-2 bg-amber-50 rounded-lg border border-amber-200">
-                            <p className="text-xs font-medium text-amber-800 flex items-center gap-1">
+                          <div className="mt-3 p-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                            <p className="text-xs font-medium text-amber-800 dark:text-amber-400 flex items-center gap-1">
                               <span>📋</span> Observações:
                             </p>
-                            <p className="text-sm text-amber-700 mt-1">{order.notes}</p>
+                            <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">{order.notes}</p>
                           </div>
                         )}
                       </div>
 
-                      <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-                        <span className="text-sm text-[#71717A]">Total</span>
-                        <span className="font-bold text-lg text-[#1a2342]">€{order.total.toFixed(2)}</span>
+                      <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-600">
+                        <span className="text-sm text-[#71717A] dark:text-gray-400">Total</span>
+                        <span className="font-bold text-lg text-[#1a2342] dark:text-white">€{order.total.toFixed(2)}</span>
                       </div>
                     </div>
                   ))}
@@ -831,13 +862,13 @@ const AdminDashboard = () => {
 
 const OrderCard = ({ order, onStatusUpdate, onCancelOrder, getStatusColor, getStatusText }) => {
   return (
-    <div className="border border-gray-200 rounded-lg p-4">
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-800">
       <div className="flex items-start justify-between mb-3">
         <div>
-          <p className="font-bold text-lg text-[#18181B]">Pedido #{order.id.slice(-8)}</p>
-          <p className="text-sm text-[#71717A]">Mesa {order.table_number} • {new Date(order.created_at).toLocaleTimeString('pt-PT')}</p>
+          <p className="font-bold text-lg text-[#18181B] dark:text-white">Pedido #{order.id.slice(-8)}</p>
+          <p className="text-sm text-[#71717A] dark:text-gray-400">Mesa {order.table_number} • {new Date(order.created_at).toLocaleTimeString('pt-PT')}</p>
           {order.payment_method === 'counter' && (
-            <p className="text-xs text-blue-600 mt-1 flex items-center gap-1">
+            <p className="text-xs text-blue-600 dark:text-blue-400 mt-1 flex items-center gap-1">
               <span>💰</span> Pagar no Balcão
             </p>
           )}
@@ -850,12 +881,12 @@ const OrderCard = ({ order, onStatusUpdate, onCancelOrder, getStatusColor, getSt
       <div className="space-y-2 mb-3">
         {order.items.map((item, index) => (
           <div key={index} className="text-sm">
-            <p className="text-[#71717A]">
+            <p className="text-[#71717A] dark:text-gray-400">
               {item.quantity}x {item.product_name}
               {item.extras && item.extras.length > 0 && ` (+ ${item.extras.map(e => e.name).join(', ')})`}
             </p>
             {item.notes && (
-              <p className="text-xs text-amber-600 mt-1 italic flex items-center gap-1">
+              <p className="text-xs text-amber-600 dark:text-amber-400 mt-1 italic flex items-center gap-1">
                 <span>📝</span> {item.notes}
               </p>
             )}
@@ -863,28 +894,28 @@ const OrderCard = ({ order, onStatusUpdate, onCancelOrder, getStatusColor, getSt
         ))}
         {/* Observações gerais do pedido */}
         {order.notes && (
-          <div className="mt-3 p-2 bg-amber-50 rounded-lg border border-amber-200">
-            <p className="text-xs font-medium text-amber-800 flex items-center gap-1">
+          <div className="mt-3 p-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+            <p className="text-xs font-medium text-amber-800 dark:text-amber-400 flex items-center gap-1">
               <span>📋</span> Observações:
             </p>
-            <p className="text-sm text-amber-700 mt-1">{order.notes}</p>
+            <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">{order.notes}</p>
           </div>
         )}
       </div>
 
-      <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-        <span className="font-bold text-lg text-[#1a2342]">€{order.total.toFixed(2)}</span>
+      <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-600">
+        <span className="font-bold text-lg text-[#1a2342] dark:text-white">€{order.total.toFixed(2)}</span>
         <div className="flex items-center gap-2">
           <button
             onClick={() => onCancelOrder(order.id)}
-            className="bg-red-100 hover:bg-red-200 text-red-600 px-3 py-2 rounded-lg font-medium transition-all text-sm"
+            className="bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 px-3 py-2 rounded-lg font-medium transition-all text-sm"
           >
             Cancelar
           </button>
           <button
             data-testid={`complete-order-${order.id}`}
             onClick={() => onStatusUpdate(order.id, 'delivered')}
-            className="bg-[#10B981] hover:bg-[#059669] text-white px-4 py-2 rounded-lg font-medium transition-all text-sm flex items-center gap-2"
+            className="bg-[#10B981] dark:bg-green-700 hover:bg-[#059669] dark:hover:bg-green-800 text-white px-4 py-2 rounded-lg font-medium transition-all text-sm flex items-center gap-2"
           >
             <CheckCircle size={16} />
             Concluído
