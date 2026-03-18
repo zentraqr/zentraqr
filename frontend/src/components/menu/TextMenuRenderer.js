@@ -6,9 +6,11 @@ import CafeTemplate from './templates/CafeTemplate';
 /**
  * TextMenuRenderer - Componente compartilhado para renderizar menus de texto
  * Usado tanto no MenuPage (cliente) como no preview do backoffice
+ * Agora usa categories/products unificados
  */
 const TextMenuRenderer = ({ 
-  menuData, 
+  categories = [],
+  products = [],
   template = 'classic',
   onAddToCart,
   brandPrimary = '#1E2A4A',
@@ -21,14 +23,14 @@ const TextMenuRenderer = ({
     template === 'cafe' ? CafeTemplate :
     ClassicTemplate;
 
-  // If no menu data, show placeholder
-  if (!menuData || !menuData.sections || menuData.sections.length === 0) {
+  // If no data, show placeholder
+  if (categories.length === 0 || products.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
         <div className="text-center p-8">
           <p className="text-gray-500 dark:text-gray-400 text-lg">
             {previewMode 
-              ? 'Adicione secções e items para visualizar o menu' 
+              ? 'Adicione categorias e produtos para visualizar o menu' 
               : 'Menu não disponível'}
           </p>
         </div>
@@ -38,7 +40,8 @@ const TextMenuRenderer = ({
 
   return (
     <TemplateComponent
-      menuData={menuData}
+      categories={categories}
+      products={products}
       onAddToCart={onAddToCart}
       brandPrimary={brandPrimary}
       brandSecondary={brandSecondary}

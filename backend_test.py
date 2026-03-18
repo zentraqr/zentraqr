@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 class QRCodeEditorTester:
-    def __init__(self, base_url="https://qr-portal-4.preview.emergentagent.com"):
+    def __init__(self, base_url="https://menu-unify.preview.emergentagent.com"):
         self.base_url = base_url
         self.token = None
         self.user = None
@@ -161,7 +161,7 @@ class QRCodeEditorTester:
 
 def main():
     # Setup
-    tester = QRCodeEditorTester("https://qr-portal-4.preview.emergentagent.com")
+    tester = QRCodeEditorTester("https://menu-unify.preview.emergentagent.com")
     
     print("🚀 Starting QR Code Editor Backend Testing")
     print("=" * 50)

@@ -1,0 +1,160 @@
+<analysis>**original_problem_statement:**
+O usuário inicialmente solicitou a implementação de um modo escuro para o painel do cliente. Durante o processo, foi descoberto que o ambiente estava vazio. O usuário forneceu um repositório do GitHub (), que foi clonado.
+
+Após a implementação do modo escuro, o usuário fez as seguintes solicitações:
+1.  Correção de problemas de CORS e URLs hardcoded que impediam o login no ambiente de pré-visualização.
+2.  Diagnóstico e correção de um bug onde os QR codes gerados apontavam para um domínio incorreto.
+3.  **Recurso principal:** Melhorar o sistema de menus para permitir a criação de menus baseados em texto, além dos menus baseados em imagem existentes.
+
+**PRODUCT REQUIREMENTS (para o novo sistema de menus):**
+1.  **Fonte Única de Verdade:** Refatorar a arquitetura para que haja um único sistema de gerenciamento de produtos (categorias e itens), eliminando a duplicação de dados entre o menu de imagem e o menu de texto.
+2.  **Apresentação Variável:** O tipo de menu ( ou ) e o template (, , ) devem controlar apenas a apresentação visual, não a estrutura de dados.
+3.  **Imagem Opcional:** A imagem do produto deve ser opcional. O sistema deve ter um fallback visual adequado no modo de imagem quando um produto não tiver imagem.
+4.  **Backoffice Unificado:** O painel de administração deve ter um único editor para produtos/categorias, com campos para destaque () e ordenação (). O editor de menu de texto separado () deve ser removido.
+5.  **Preview Funcional:** O backoffice deve incluir um preview funcional que renderiza o menu de texto usando os templates e reflete as alterações em tempo real.
+6.  **Compatibilidade com Pedidos:** O sistema de pedidos existente deve funcionar perfeitamente com a nova estrutura unificada, permitindo que os clientes façam pedidos de itens de ambos os modos de menu.
+
+**User's preferred language**: O idioma principal do usuário é o **Português (pt)**. O próximo agente DEVE responder apenas em português.
+
+**what currently exists?**
+A aplicação full-stack ZentraQR está configurada e em execução. O modo escuro foi implementado em todo o painel de administração. Problemas de configuração de ambiente (), CORS e URLs hardcoded foram resolvidos. A lógica de geração de QR code foi corrigida para usar a URL de ambiente correta.
+
+Uma grande refatoração da arquitetura do menu está em andamento para unificar a fonte de dados dos produtos, conforme solicitado pelo usuário. O backend já foi atualizado com os novos campos no modelo de dados, e as templates de frontend foram parcialmente adaptadas.
+
+**Last working item**:
+-   **Last item agent was working:** O agente estava no meio da refatoração do componente . O objetivo era remover a lógica do  separado e unificar a interface de gerenciamento de produtos, adicionando um seletor de template de menu de texto e preparando a UI para os novos campos (, ).
+-   **Status:** BLOCKED
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** Frontend testing agent
+-   **User Testing Done:** N
+
+**All Pending/In progress Issue list**:
+-   **Issue 1:** O componente  está quebrado.
+    -   **Priority:** P0
+    -   **Description:** As últimas tentativas de refatorar o arquivo  para remover a lógica condicional do  resultaram em erros de sintaxe JSX. O frontend não compila.
+    -   **Attempted fixes:** O agente tentou vários  para ajustar a estrutura de  e remover blocos de código, mas falhou em produzir um JSX válido.
+    -   **Next debug checklist:**
+        1.  Ver o arquivo  por completo.
+        2.  Identificar as  não fechadas ou mal aninhadas, especialmente em torno da lógica que renderizava condicionalmente o  vs. o editor de produtos.
+        3.  Reescrever a estrutura do  do componente para ter um layout claro:
+            -   Toggle para .
+            -   Seletor de  (visível quando o tipo de menu de texto estiver ativo).
+            -   A lista de categorias e produtos (que será a única fonte de verdade).
+        4.  Remover completamente o  e qualquer referência ao .
+    -   **Why fix this issue and what will be achieved with the fix?** Corrigir este arquivo é crucial para desbloquear toda a refatoração. A correção permitirá que o frontend compile e que o desenvolvimento do backoffice unificado continue.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** Y (o agente tentou e falhou várias vezes em corrigir a sintaxe JSX).
+    -   **Should Test frontend/backend/both after fix?** Frontend
+
+**In progress Task List**:
+-   **Task 1:** Concluir a refatoração para um sistema de menu unificado.
+    -   **Priority:** P0
+    -   **Where to resume:** Comece por corrigir o **Issue 1** em . Depois de o frontend compilar, continue com o plano de refatoração:
+        1.  **Backoffice UI:** Atualize a UI de edição de produtos (provavelmente no ) para incluir campos para Destaque () e Ordem de Exibição ().
+        2.  **Imagem Opcional:** Garanta que a UI de upload de imagem no modal do produto não é obrigatória.
+        3.  **Fallback Visual:** No  (usado pelo menu de imagem), implemente um fallback visual (ex: um ícone ou as iniciais do produto) para quando  não existir.
+        4.  **Preview:** Certifique-se de que o preview no backoffice () usa o  e reflete as alterações do editor unificado.
+        5.  **Limpeza:** Exclua o arquivo  e qualquer outro código relacionado que se tornou obsoleto.
+    -   **What will be achieved with this?** Uma arquitetura de menu limpa, escalável e sem duplicação de dados, atendendo a todos os requisitos do usuário. O restaurante gerenciará os produtos em um único lugar, e a apresentação (imagem ou texto) será apenas uma camada visual.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** Both
+    -   **Blocked on something:** Issue 1.
+
+**Upcoming and Future Tasks**
+-   **Upcoming Tasks:**
+    -   **(P1) Implementar reordenação drag-and-drop:** Adicionar funcionalidade de arrastar e soltar no  para reordenar categorias e produtos, atualizando o campo .
+-   **Future Tasks:**
+    -   Criar uma versão para impressão do menu de texto.
+    -   Desenvolver uma ferramenta de migração para converter produtos existentes no antigo formato  para a nova estrutura unificada (o usuário adiou isso).
+
+**Completed work in this session**
+-   **Setup:** Clonagem do repositório  e configuração inicial do ambiente.
+-   **UI:** Implementação completa do Modo Escuro no painel de administração ( e sub-páginas) usando .
+-   **Configuração:** Criação e correção dos arquivos  do frontend e backend, resolvendo problemas de CORS e URLs para o ambiente de preview.
+-   **Correção de Bug (QR Code):** A lógica de geração de QR codes no  foi corrigida para usar a URL correta do ambiente, em vez de um valor hardcoded.
+-   **Refatoração (Backend):**
+    -   O modelo  foi atualizado para incluir  e .
+    -   O modelo  foi simplificado, removendo a estrutura de dados duplicada .
+    -   Os endpoints do backend foram ajustados para ordenar por .
+-   **Refatoração (Frontend):**
+    -    (página do cliente) foi refatorado para carregar dados da fonte única (categorias/produtos) e renderizar condicionalmente o menu de imagem ou texto.
+    -   Os componentes de template de texto (, , ) foram atualizados para consumir a nova estrutura de dados unificada.
+    -   O componente compartilhado  foi criado para renderizar o menu de texto.
+
+**Earlier issues found/mentioned but not fixed**
+-   Nenhum.
+
+**Known issue recurrence from previous fork**
+-   Não aplicável.
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+-   **Stack:** React (Frontend), FastAPI (Backend), MongoDB (Database).
+-   **Frontend:** TailwindCSS para estilização, React Context API para gerenciamento de estado global (tema, autenticação).
+-   **Backend:** Pydantic para validação de modelos de dados, Motor como driver assíncrono para MongoDB.
+-   **Arquitetura:** Single Page Application (SPA) com uma API RESTful.
+
+**key DB schema**
+-   : { , , : { : image | text, : classic | modern | cafe } }
+-   : { , , , , ,  }
+-   : { , , , , ,  (Optional), ,  (bool),  (int) }
+
+**changes in tech stack**
+-   Nenhuma.
+
+**All files of reference**
+-   : Contém os modelos de dados do Pydantic e os endpoints da API. Foi modificado para a refatoração do menu.
+-   : **Arquivo crítico e atualmente quebrado**. Onde a gestão unificada de menus deve ser implementada.
+-   : Página do cliente que renderiza o menu. Foi refatorada para suportar a nova estrutura de dados unificada.
+-   : Componente compartilhado para renderizar o menu de texto.
+-   : Gerencia o modo claro/escuro.
+-    e : Arquivos de configuração do ambiente.
+
+**Areas that need refactoring**:
+-   : Precisa ser corrigido e finalizado conforme o plano de refatoração para se tornar a única fonte de gerenciamento de menu no backoffice.
+-   O código relacionado ao  e  precisa ser completamente removido do projeto.
+
+**key api endpoints**
+-   : Atualiza o tipo de menu ativo e o template.
+-   : Obtém as categorias (seções) do menu.
+-   : Obtém os produtos (itens) de uma categoria.
+-   : Endpoint corrigido para gerar dados do QR Code.
+
+**Critical Info for New Agent**
+1.  **Refatoração é Prioridade:** O objetivo principal agora é concluir a refatoração do sistema de menu. A abordagem de dados duplicados foi **rejeitada** pelo usuário. A meta é ter uma **fonte única de verdade** para produtos/categorias, com a apresentação ( vs. ) sendo apenas uma camada visual.
+2.  ** está quebrado:** O trabalho deve começar corrigindo o arquivo , que tem erros de sintaxe JSX e impede a compilação do frontend.
+3.  **Fluxo Unificado:** O backend já foi parcialmente adaptado. O frontend precisa ser totalmente alinhado:  já lê da fonte única, mas o  precisa ser corrigido para *escrever* nessa fonte única de forma simplificada.
+4.  **Não reintroduza :** Este componente é obsoleto e deve ser removido. Toda a edição de menu deve acontecer dentro do fluxo de gerenciamento de produtos existente.
+
+**Last 10 User Messages and any pending HUMAN messages**
+-   **User:** Aprova a estratégia A+ híbrida para reutilizar a lógica de pedidos.
+-   **User:** Aponta que o QR code funciona para menu de imagem, mas não para o de texto, e solicita uma solução completa.
+-   **User:** Pede para o  ser atualizado para detectar o tipo de menu ativo e renderizar o conteúdo correto (texto ou imagem).
+-   **User:** Solicita a implementação de um preview funcional do menu de texto no backoffice.
+-   **User:** **Identifica o problema central:** a duplicação de dados, com produtos sendo gerenciados em dois lugares diferentes.
+-   **User:** **Solicita explicitamente a refatoração:** quer uma fonte única de dados para produtos, com a imagem sendo opcional e com fallbacks visuais.
+-   **User:** Define os requisitos detalhados para a refatoração.
+-   **User:** Confirma o plano de refatoração proposto pelo agente (adicionar campos /, remover , etc.).
+-   **User:** Reitera as prioridades e os cenários de teste para a refatoração.
+-   **User:** Dá o OK final para o agente iniciar a implementação da refatoração completa.
+
+**Project Health Check:**
+-   **Broken:**
+    -   : Contém erros de sintaxe JSX que impedem a compilação do frontend.
+-   **Mocked:**
+    -   Nenhum.
+
+**3rd Party Integrations**
+-   **MongoDB Atlas:** Conectado via  no . As credenciais foram fornecidas pelo usuário.
+-   **Stripe:** Uma chave de teste () está no , mas a integração não foi utilizada ou testada nesta sessão.
+
+**Testing status**
+-   **Testing agent used after significant changes:** NO
+-   **Troubleshoot agent used after agent stuck in loop:** NO
+-   **Test files created:** []
+-   **Known regressions:** O frontend não compila devido a erros em .
+
+**Credentials to test flow:**
+Para testar o fluxo de login e o painel, o usuário deve criar uma nova conta na página de Sign Up do ambiente de preview.</analysis>

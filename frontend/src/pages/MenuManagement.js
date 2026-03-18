@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Edit2, Trash2, Save, X, Image as ImageIcon, Upload, Camera } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
-import TextMenuEditor from '../components/menu/TextMenuEditor';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -151,6 +150,7 @@ const MenuManagement = () => {
   
   // New state for menu type
   const [menuType, setMenuType] = useState('image'); // 'image' | 'text'
+  const [textMenuTemplate, setTextMenuTemplate] = useState('classic');
   const [loadingMenuConfig, setLoadingMenuConfig] = useState(true);
 
   useEffect(() => {
@@ -162,6 +162,7 @@ const MenuManagement = () => {
     try {
       const response = await axios.get(`${API}/restaurants/${user.restaurant_id}/menu-config`);
       setMenuType(response.data.active_menu_type || 'image');
+      setTextMenuTemplate(response.data.text_menu_template || 'classic');
     } catch (error) {
       console.error('Erro ao carregar configuração do menu:', error);
     } finally {
@@ -184,6 +185,24 @@ const MenuManagement = () => {
     } catch (error) {
       console.error('Erro ao atualizar tipo de menu:', error);
       alert('Erro ao atualizar tipo de menu');
+    }
+  };
+
+  const handleTemplateChange = async (newTemplate) => {
+    try {
+      await axios.put(
+        `${API}/restaurants/${user.restaurant_id}/menu-config`,
+        { text_menu_template: newTemplate },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      setTextMenuTemplate(newTemplate);
+    } catch (error) {
+      console.error('Erro ao atualizar template:', error);
+      alert('Erro ao atualizar template');
     }
   };
 
@@ -230,13 +249,13 @@ const MenuManagement = () => {
         <h1 className="text-3xl font-bold text-[#18181B] dark:text-white">Gestão de Menu</h1>
       </div>
 
-      {/* Menu Type Toggle */}
+      {/* Menu Type Toggle + Template Selector */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6 mb-6">
         <h2 className="text-lg font-bold text-[#18181B] dark:text-white mb-4">Tipo de Menu</h2>
-        <div className="flex gap-4">
+        <div className="grid grid-cols-2 gap-4 mb-4">
           <button
             onClick={() => handleMenuTypeChange('image')}
-            className={`flex-1 px-6 py-4 rounded-lg border-2 transition-all ${
+            className={`px-6 py-4 rounded-lg border-2 transition-all ${
               menuType === 'image'
                 ? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
                 : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
@@ -246,14 +265,14 @@ const MenuManagement = () => {
               <div className="text-2xl mb-2">🖼️</div>
               <div className="font-medium">Menu por Imagem</div>
               <div className="text-sm mt-1 opacity-75">
-                {menuType === 'image' ? '(Ativo)' : 'Produtos com fotos'}
+                {menuType === 'image' ? '(Ativo)' : 'Com fotos dos produtos'}
               </div>
             </div>
           </button>
 
           <button
             onClick={() => handleMenuTypeChange('text')}
-            className={`flex-1 px-6 py-4 rounded-lg border-2 transition-all ${
+            className={`px-6 py-4 rounded-lg border-2 transition-all ${
               menuType === 'text'
                 ? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400'
                 : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
@@ -263,23 +282,42 @@ const MenuManagement = () => {
               <div className="text-2xl mb-2">📄</div>
               <div className="font-medium">Menu por Texto</div>
               <div className="text-sm mt-1 opacity-75">
-                {menuType === 'text' ? '(Ativo)' : 'Carta tradicional'}
+                {menuType === 'text' ? '(Ativo)' : 'Carta sem fotos'}
               </div>
             </div>
           </button>
         </div>
+
+        {/* Template Selector - Only for text menu */}
+        {menuType === 'text' && (
+          <div>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+              Template de Apresentação
+            </label>
+            <div className="grid grid-cols-3 gap-3">
+              {['classic', 'modern', 'cafe'].map((template) => (
+                <button
+                  key={template}
+                  onClick={() => handleTemplateChange(template)}
+                  className={`p-4 border-2 rounded-lg transition-all ${
+                    textMenuTemplate === template
+                      ? 'border-blue-600 dark:border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+                  }`}
+                >
+                  <div className="text-sm font-medium text-gray-900 dark:text-white capitalize">
+                    {template === 'classic' && '📜 Clássico'}
+                    {template === 'modern' && '✨ Moderno'}
+                    {template === 'cafe' && '☕ Café'}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Render appropriate editor based on menu type */}
-      {menuType === 'text' ? (
-        <TextMenuEditor 
-          restaurantId={user.restaurant_id} 
-          onSave={() => {
-            // Optional: callback after save
-          }}
-        />
-      ) : (
-        <>
+      {/* Single Product/Category Management (works for both modes) */}
           <div className="flex items-center justify-end gap-3 mb-6">
             <button
               data-testid="add-category-button"

@@ -374,6 +374,8 @@ class Product(BaseModel):
     price: float
     image_url: Optional[str] = None
     extras: List[Extra] = []
+    highlighted: bool = False  # For chef recommendations / popular items
+    display_order: int = 0     # For manual ordering
     active: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -385,6 +387,8 @@ class ProductCreate(BaseModel):
     price: float
     image_url: Optional[str] = None
     extras: List[ExtraCreate] = []
+    highlighted: bool = False
+    display_order: int = 0
 
 # ============= TEXT MENU MODELS =============
 
@@ -413,17 +417,16 @@ class TextMenuData(BaseModel):
     sections: List[TextMenuSection] = []
 
 class MenuConfig(BaseModel):
-    """Restaurant menu configuration"""
+    """Restaurant menu configuration - controls presentation only"""
     model_config = ConfigDict(extra="ignore")
     active_menu_type: str = "image"  # "image" | "text"
     text_menu_template: str = "classic"  # "classic" | "modern" | "cafe"
-    text_menu_data: Optional[TextMenuData] = None
+    # NOTE: No text_menu_data - uses unified Category/Product structure
 
 class MenuConfigUpdate(BaseModel):
     """Update menu configuration"""
     active_menu_type: Optional[str] = None
     text_menu_template: Optional[str] = None
-    text_menu_data: Optional[TextMenuData] = None
 
 class OrderItem(BaseModel):
     product_id: str
@@ -1004,11 +1007,10 @@ async def get_menu_config(restaurant_id: str):
     if not restaurant:
         raise HTTPException(status_code=404, detail="Restaurante não encontrado")
     
-    # Return menu_config or default values
+    # Return menu_config or default values (no text_menu_data)
     menu_config = restaurant.get('menu_config', {
         'active_menu_type': 'image',
-        'text_menu_template': 'classic',
-        'text_menu_data': None
+        'text_menu_template': 'classic'
     })
     
     return menu_config
@@ -1027,11 +1029,10 @@ async def update_menu_config(
     if not restaurant:
         raise HTTPException(status_code=404, detail="Restaurante não encontrado")
     
-    # Get current menu_config or create default
+    # Get current menu_config or create default (no text_menu_data)
     current_config = restaurant.get('menu_config', {
         'active_menu_type': 'image',
-        'text_menu_template': 'classic',
-        'text_menu_data': None
+        'text_menu_template': 'classic'
     })
     
     # Update only provided fields
@@ -1562,7 +1563,7 @@ async def get_products_by_restaurant(restaurant_id: str):
     products = await db.products.find(
         {"restaurant_id": restaurant_id, "active": True},
         {"_id": 0}
-    ).to_list(1000)
+    ).sort("display_order", 1).to_list(1000)
     
     for p in products:
         if isinstance(p['created_at'], str):
@@ -1574,7 +1575,7 @@ async def get_products_by_category(category_id: str):
     products = await db.products.find(
         {"category_id": category_id, "active": True},
         {"_id": 0}
-    ).to_list(1000)
+    ).sort("display_order", 1).to_list(1000)
     
     for p in products:
         if isinstance(p['created_at'], str):
@@ -1823,7 +1824,7 @@ async def get_checkout_status(session_id: str):
     if not EMERGENT_AVAILABLE:
         return {"status": "unknown", "payment_status": transaction.get('payment_status', 'pending')}
     
-    webhook_url = "https://order-lifecycle-12.preview.emergentagent.com/api/webhook/stripe"
+    webhook_url = "https://menu-unify.preview.emergentagent.com/api/webhook/stripe"
     stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
     
     try:
@@ -1869,7 +1870,7 @@ async def stripe_webhook(request: Request):
     body = await request.body()
     signature = request.headers.get("Stripe-Signature")
     
-    webhook_url = "https://order-lifecycle-12.preview.emergentagent.com/api/webhook/stripe"
+    webhook_url = "https://menu-unify.preview.emergentagent.com/api/webhook/stripe"
     stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
     
     try:

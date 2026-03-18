@@ -81,9 +81,8 @@ const MenuPageContent = ({ restaurantId, tableId, navigate }) => {
   const [waiterCalled, setWaiterCalled] = useState(false);
   const [showCart, setShowCart] = useState(false);
   
-  // New: Text menu support
+  // Menu type support (uses same categories/products)
   const [menuType, setMenuType] = useState('image'); // 'image' | 'text'
-  const [textMenuData, setTextMenuData] = useState(null);
   const [textMenuTemplate, setTextMenuTemplate] = useState('classic');
 
   // Use primary color or fallback
@@ -110,46 +109,25 @@ const MenuPageContent = ({ restaurantId, tableId, navigate }) => {
 
   const loadData = async () => {
     try {
-      // Load menu config to determine active menu type
-      const menuConfigRes = await axios.get(`${API}/restaurants/${restaurantId}/menu-config`);
+      // ALWAYS load categories and products (unified data source)
+      const [catRes, prodRes, menuConfigRes] = await Promise.all([
+        axios.get(`${API}/categories/restaurant/${restaurantId}`),
+        axios.get(`${API}/products/restaurant/${restaurantId}`),
+        axios.get(`${API}/restaurants/${restaurantId}/menu-config`)
+      ]);
+
+      setCategories(catRes.data);
+      setProducts(prodRes.data);
+      
       const menuConfig = menuConfigRes.data;
-      
       setMenuType(menuConfig.active_menu_type || 'image');
-      
-      if (menuConfig.active_menu_type === 'text' && menuConfig.text_menu_data) {
-        // Load text menu
-        setTextMenuData(menuConfig.text_menu_data);
-        setTextMenuTemplate(menuConfig.text_menu_template || 'classic');
-      } else {
-        // Load image menu (current behavior)
-        const [catRes, prodRes] = await Promise.all([
-          axios.get(`${API}/categories/restaurant/${restaurantId}`),
-          axios.get(`${API}/products/restaurant/${restaurantId}`)
-        ]);
+      setTextMenuTemplate(menuConfig.text_menu_template || 'classic');
 
-        setCategories(catRes.data);
-        setProducts(prodRes.data);
-
-        if (catRes.data.length > 0) {
-          setSelectedCategory(catRes.data[0].id);
-        }
+      if (catRes.data.length > 0) {
+        setSelectedCategory(catRes.data[0].id);
       }
     } catch (error) {
       console.error('Error loading data:', error);
-      // Fallback to image menu on error
-      try {
-        const [catRes, prodRes] = await Promise.all([
-          axios.get(`${API}/categories/restaurant/${restaurantId}`),
-          axios.get(`${API}/products/restaurant/${restaurantId}`)
-        ]);
-        setCategories(catRes.data);
-        setProducts(prodRes.data);
-        if (catRes.data.length > 0) {
-          setSelectedCategory(catRes.data[0].id);
-        }
-      } catch (fallbackError) {
-        console.error('Error loading menu:', fallbackError);
-      }
     } finally {
       setLoading(false);
     }
@@ -281,13 +259,14 @@ const MenuPageContent = ({ restaurantId, tableId, navigate }) => {
     );
   }
 
-  // Render text menu if active
-  if (menuType === 'text' && textMenuData) {
+  // Render text menu if active (uses same categories/products)
+  if (menuType === 'text') {
     return (
       <div className="relative min-h-screen">
-        {/* Text Menu - Using shared renderer */}
+        {/* Text Menu - Using unified categories/products */}
         <TextMenuRenderer
-          menuData={textMenuData}
+          categories={categories}
+          products={products}
           template={textMenuTemplate}
           onAddToCart={addTextMenuItemToCart}
           brandPrimary={brandPrimary}

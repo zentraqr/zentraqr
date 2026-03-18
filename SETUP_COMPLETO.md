@@ -9,9 +9,9 @@
 - ✅ **Socket.IO**: Configurado para notificações em tempo real
 
 ### 🌐 URLs do Projeto:
-- **Frontend**: https://zentraqr-hub.preview.emergentagent.com
-- **Backend API**: https://zentraqr-hub.preview.emergentagent.com/api
-- **Admin Login**: https://zentraqr-hub.preview.emergentagent.com/admin/login
+- **Frontend**: https://menu-unify.preview.emergentagent.com
+- **Backend API**: https://menu-unify.preview.emergentagent.com/api
+- **Admin Login**: https://menu-unify.preview.emergentagent.com/admin/login
 
 ---
 
@@ -79,14 +79,14 @@ DB_NAME="QRcode"
 CORS_ORIGINS="*"
 JWT_SECRET="your-secret-key-change-in-production-12345"
 STRIPE_API_KEY="sk_test_emergent"
-FRONTEND_URL="https://zentraqr-hub.preview.emergentagent.com"
+FRONTEND_URL="https://menu-unify.preview.emergentagent.com"
 GMAIL_EMAIL="zentraqr@gmail.com"
 GMAIL_APP_PASSWORD="sjmktrcaxpoklgyd"
 ```
 
 ### Frontend (.env):
 ```env
-REACT_APP_BACKEND_URL=https://zentraqr-hub.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://menu-unify.preview.emergentagent.com
 WDS_SOCKET_PORT=443
 ENABLE_HEALTH_CHECK=false
 ```
@@ -134,7 +134,7 @@ curl http://localhost:8001/api/products/restaurant/42075462-798e-4f1c-aa88-16330
 
 Para gerar QR Code de uma mesa:
 ```
-https://zentraqr-hub.preview.emergentagent.com/menu?restaurant_id=42075462-798e-4f1c-aa88-163306477ecf&table_id=0af1b474-3201-4a67-a85e-78c59a2994b8
+https://menu-unify.preview.emergentagent.com/menu?restaurant_id=menu-unify&table_id=menu-unify
 ```
 
 ---
