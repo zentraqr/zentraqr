@@ -160,8 +160,8 @@ const TextMenuEditor = ({ restaurantId, onSave }) => {
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
               Informações Gerais
             </h2>
-            
-            <div className="space-y-4">
+        
+        <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
               Título do Menu *
@@ -307,7 +307,6 @@ const TextMenuEditor = ({ restaurantId, onSave }) => {
       </div>
     </div>
   </div>
-    </div>
   );
 };
 

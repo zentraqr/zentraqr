@@ -8,9 +8,7 @@ import {
   Check, AlertCircle
 } from 'lucide-react';
 import { RestaurantProvider, useRestaurant } from '../contexts/RestaurantContext';
-import ClassicTemplate from '../components/menu/templates/ClassicTemplate';
-import ModernTemplate from '../components/menu/templates/ModernTemplate';
-import CafeTemplate from '../components/menu/templates/CafeTemplate';
+import TextMenuRenderer from '../components/menu/TextMenuRenderer';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -285,19 +283,16 @@ const MenuPageContent = ({ restaurantId, tableId, navigate }) => {
 
   // Render text menu if active
   if (menuType === 'text' && textMenuData) {
-    const TemplateComponent = 
-      textMenuTemplate === 'modern' ? ModernTemplate :
-      textMenuTemplate === 'cafe' ? CafeTemplate :
-      ClassicTemplate;
-
     return (
       <div className="relative min-h-screen">
-        {/* Text Menu Template */}
-        <TemplateComponent
+        {/* Text Menu - Using shared renderer */}
+        <TextMenuRenderer
           menuData={textMenuData}
+          template={textMenuTemplate}
           onAddToCart={addTextMenuItemToCart}
           brandPrimary={brandPrimary}
           brandSecondary={brandSecondary}
+          previewMode={false}
         />
 
         {/* Floating Cart Button */}
