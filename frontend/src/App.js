@@ -21,6 +21,8 @@ import SubscriptionSuccessPage from './pages/SubscriptionSuccessPage';
 import FloorPlanPage from './pages/FloorPlanPage';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import TermsPage from './pages/TermsPage';
+import PrivacyPage from './pages/PrivacyPage';
 
 function App() {
   return (
@@ -49,6 +51,8 @@ function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
             </Routes>
           </SocketProvider>
         </AuthProvider>
