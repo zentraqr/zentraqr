@@ -20,7 +20,8 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     const newSocket = io(BACKEND_URL, {
       path: '/api/socket.io',
-      transports: ['polling', 'websocket'],
+      transports: ['websocket'], 
+      withCredentials: true,
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
