@@ -3150,10 +3150,16 @@ async def reset_password(data: PasswordResetConfirm):
 
 fastapi_app.include_router(api_router)
 
+# No final do server.py
 fastapi_app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    # Em vez de '*', usa a lista exata do teu .env ou domínios reais
+    allow_origins=[
+        "https://www.zentraqr.com",
+        "https://zentraqr.com",
+        "http://localhost:3000" # Se ainda testares localmente
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
