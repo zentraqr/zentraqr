@@ -222,6 +222,8 @@ export const translations = {
         description: 'Introduza as suas credenciais para gerir o seu restaurante.',
         emailLabel: 'Email',
         passwordLabel: 'Password',
+        // Adiciona esta linha abaixo:
+        "Forgot Password": 'Esqueci-me da palavra-passe', 
         button: 'Entrar na conta',
         buttonLoading: 'A entrar...',
         footer: 'Ao entrar, concorda com os nossos Termos de Serviço e Política de Privacidade.',
